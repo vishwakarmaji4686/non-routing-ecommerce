@@ -1,0 +1,29 @@
+<div class="row">
+    <h3>Users List</h3>
+    <div class="col-12">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>S.NO</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Gender</th>
+                    <th>DOB</th>
+                    <th>Hobbies</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let i=0; i < users.length; i++){ %>
+                    <tr>
+                        <td><%= i + 1; %></td>
+                        <td><%= users[i].first_name +" "+users[i].last_name; %></td>
+                        <td><%= users[i].email; %></td>
+                        <td><%= users[i].gender; %></td>
+                        <td><%= users[i].dob; %></td>
+                        <td><%= users[i].hobbies; %></td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
