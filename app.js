@@ -77,20 +77,7 @@ app.get('/all-users', function (req, res) {
         } else {
             console.log("All Users :::: ", result);
             pageInfo.users = result;
-            connection.query("SELECT * FROM products", function(error1, result1){
-                if(error1){
-                    console.log("Database query error");
-                } else {
-                    connection.query("SELECT * FROM orders", function(error1, result1){
-                        if(error1){
-                            console.log("Database query error");
-                        } else {
-                            
-                            res.render("template", pageInfo);
-                        }
-                    });        
-                }
-            });
+            res.render("template", pageInfo);
         }
     });
 });
