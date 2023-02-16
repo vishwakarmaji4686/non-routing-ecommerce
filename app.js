@@ -62,25 +62,32 @@ app.get('/register', function (req, res) {
     res.render("template", pageInfo);
 });
 
-app.get('/all-users', function (req, res) {
-    console.log("all-users");
-    let pageInfo = {
-        title: "All Registered Users",
-        pageName: 'all-users',
-        users: []
-    };
-    console.log("STEP 11111111111111111111");
-    connection.query("SELECT * FROM users", function (error, result) {
-        console.log("STEP 222222222222222");
-        if (error) {
-            console.log("Database Qquery Error");
-        } else {
-            console.log("All Users :::: ", result);
-            pageInfo.users = result;
-            res.render("template", pageInfo);
-        }
-    });
+app.get('/all-users', async function (req, res) {
+    try {
+        let pageInfo = {
+            title: "All Registered Users",
+            pageName: 'all-users',
+            users: []
+        };
+        const allUsers = await getAllUsers();
+        pageInfo.users = allUsers;
+        res.render("template", pageInfo);
+    } catch (error) {
+        console.log("All users page Errro :::", error);
+    }
 });
+
+async function getAllUsers() {
+    return new Promise(function (resolve, reject) {
+        connection.query("SELECT * FROM users", function (error, result) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
 
 app.get('/login', function (req, res) {
     let pageInfo = {
@@ -131,7 +138,29 @@ app.post('/register', function (req, res) {
     });
 });
 
+/** 
+ * Start : Admin UI
+ */
 
+app.get('/admin', function (req, res) {
+    let page = {
+        title: "",
+        pageName: "home"
+    }
+    res.render('admin/template', page);
+});
+
+app.get('/admin/products', function (req, res) {
+    let page = {
+        title: "",
+        pageName: "product"
+    }
+    res.render('admin/template', page);
+});
+
+/** 
+ * End : Admin UI
+ */
 
 const port = 3001;
 app.listen(port, function () {
