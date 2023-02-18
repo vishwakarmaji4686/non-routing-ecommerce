@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
-
+const fileupload = require("express-fileupload");
 
 /** 
  * set template engine
@@ -10,6 +10,10 @@ const mysql = require("mysql");
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(fileupload());
+
+
+
 
 /** 
  * START : Create Mysql Connection
@@ -156,6 +160,48 @@ app.get('/admin/products', function (req, res) {
         pageName: "product"
     }
     res.render('admin/template', page);
+});
+
+app.post("/admin/product", function (req, res) {
+    console.log("req.body", req.body);
+    console.log("req.files", req.files);
+
+    let product = {
+        title: req.body.title,
+        description: req.body.description,
+        price: req.body.price,
+        quantity: req.body.quantity,
+        category: req.body.category,
+        featured: req.body.featured,
+    };
+    console.log("product", product);
+
+    if (req.files && req.files.productImages) {
+        for (let i = 0; i < req.files.productImages.length; i++) {
+            let singleImage = req.files.productImages[i];
+            console.log("singleImage :: ", i, singleImage);
+
+            let imageNameArr = singleImage.name.split('.');
+            let imgExtension = imageNameArr.splice(-1).toString();
+            console.log("imageNameArr", imgExtension);
+
+            let currentDate = new Date();
+
+            let randomNumber = Math.round(Math.random(99, 99999) * 10000);
+            let imgNewName = currentDate.getTime() + "________" + randomNumber + "." + imgExtension;
+            console.log("imgNewName", imgNewName);
+
+            let uploadPath = __dirname + "/public/product_images/" + imgNewName;
+            singleImage.mv(uploadPath, function (error) {
+                if (error) {
+                    console.log("Unable to upload Image", error);
+                }
+            });
+        }
+    }
+
+
+
 });
 
 /** 

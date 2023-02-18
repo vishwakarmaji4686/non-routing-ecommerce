@@ -8,7 +8,7 @@
                 <h6 class="m-0 font-weight-bold text-primary">Products</h6>
             </div>
             <div class="col-6 text text-right">
-                <button class="btn btn-info">Add New</button>
+                <button class="btn btn-info" data-toggle="modal" data-target="#createProductModal">Add New</button>
             </div>
         </div>
     </div>
@@ -46,3 +46,81 @@
         </div>
     </div>
 </div>
+
+<!-- Start: Modal Add New Product -->
+<div class="modal fade" id="createProductModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <form action="/admin/product" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create New Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <label>Title</label>
+                            <input type="text" name="title" id="title" class="form-control" />
+                        </div>
+                        <div class="col-12 mt-2">
+                            <label>Description</label>
+                            <textarea name="description" class="form-control"></textarea>
+                        </div>
+                        <div class="col-6 mt-2">
+                            <label>Price</label>
+                            <input type="number" name="price" id="price" class="form-control" />
+                        </div>
+                        <div class="col-6 mt-2">
+                            <label>Quantity</label>
+                            <input type="number" name="quantity" id="quantity" class="form-control" />
+                        </div>
+
+                        <div class="col-6 mt-2">
+                            <label>Category</label>
+                            <select name="category" class="form-control">
+                                <option value="">Select Product Category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="mens apparal">Men's Apparal</option>
+                                <option value="kids apparal">Kids Apparal</option>
+                                <option value="Womens apparal">Womens Apparal</option>
+                                <option value="home decor">Home Decor</option>
+                                <option value="other">other</option>
+                            </select>
+                        </div>
+                        <div class="col-6 mt-2">
+                            <label>Featured</label><br />
+                            <span>
+                                <input type="radio" name="featured" value="yes" />
+                                Yes
+                            </span>
+                            <span>
+                                <input type="radio" name="featured" value="no" />
+                                No
+                            </span>
+                        </div>
+
+                        <div class="col-12 mt-2">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Upload</span>
+                                </div>
+                                <div class="custom-file">
+                                    <input type="file" multiple="multiple" name="productImages" class="custom-file-input" id="inputGroupFile01">
+                                    <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End: Modal Add New Product -->
