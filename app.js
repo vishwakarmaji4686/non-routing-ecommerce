@@ -154,55 +154,104 @@ app.get('/admin', function (req, res) {
     res.render('admin/template', page);
 });
 
-app.get('/admin/products', function (req, res) {
-    let page = {
-        title: "",
-        pageName: "product"
+app.get('/admin/products', async function (req, res) {
+    try {
+        let page = {
+            title: "",
+            pageName: "product"
+        }
+        let products = await getAllProducts();
+        page.products = products;
+        console.log("page", page);
+        res.render('admin/template', page);
+    } catch (error) {
+        console.log("error", error);
     }
-    res.render('admin/template', page);
 });
 
-app.post("/admin/product", function (req, res) {
+app.post("/admin/product", async function (req, res) {
     console.log("req.body", req.body);
     console.log("req.files", req.files);
-
-    let product = {
-        title: req.body.title,
-        description: req.body.description,
-        price: req.body.price,
-        quantity: req.body.quantity,
-        category: req.body.category,
-        featured: req.body.featured,
-    };
-    console.log("product", product);
-
-    if (req.files && req.files.productImages) {
-        for (let i = 0; i < req.files.productImages.length; i++) {
-            let singleImage = req.files.productImages[i];
-            console.log("singleImage :: ", i, singleImage);
-
-            let imageNameArr = singleImage.name.split('.');
-            let imgExtension = imageNameArr.splice(-1).toString();
-            console.log("imageNameArr", imgExtension);
-
-            let currentDate = new Date();
-
-            let randomNumber = Math.round(Math.random(99, 99999) * 10000);
-            let imgNewName = currentDate.getTime() + "________" + randomNumber + "." + imgExtension;
-            console.log("imgNewName", imgNewName);
-
-            let uploadPath = __dirname + "/public/product_images/" + imgNewName;
-            singleImage.mv(uploadPath, function (error) {
-                if (error) {
-                    console.log("Unable to upload Image", error);
-                }
-            });
+    try {
+        let product = {
+            title: req.body.title,
+            description: req.body.description,
+            price: req.body.price,
+            quantity: req.body.quantity,
+            category: req.body.category,
+            featured: (req.body.featured && req.body.featured == 'no') ? 0 : 1,
+        };
+        console.log("product", product);
+        let allImages = [];
+        if (req.files && req.files.productImages) {
+            for (let i = 0; i < req.files.productImages.length; i++) {
+                let singleImage = req.files.productImages[i];
+                console.log("singleImage :: ", i, singleImage);
+                let imageNewName = await uploadImage(singleImage);
+                console.log("\n\n ************** imageNewName", imageNewName);
+                allImages.push(imageNewName);
+            }
+            console.log("\n\n ***** All Images", allImages);
+            let uploadImages = allImages.toString(',');
+            product.images = uploadImages;
         }
+        await insertProduct(product);
+        res.redirect('/admin/products');
+        console.log("\n\n product", product);
+    } catch (error) {
+        console.log("Errror", error);
     }
-
-
-
 });
+
+async function uploadImage(singleImage) {
+    return new Promise(function (resolve, reject) {
+        let imageNameArr = singleImage.name.split('.');
+        let imgExtension = imageNameArr.splice(-1).toString();
+        console.log("imageNameArr", imgExtension);
+
+        let currentDate = new Date();
+
+        let randomNumber = Math.round(Math.random(99, 99999) * 10000);
+        let imgNewName = currentDate.getTime() + "________" + randomNumber + "." + imgExtension;
+        console.log("imgNewName", imgNewName);
+
+        let uploadPath = __dirname + "/public/product_images/" + imgNewName;
+        singleImage.mv(uploadPath, function (error) {
+            if (error) {
+                console.log("Unable to upload Image", error);
+                reject(error);
+            } else {
+                resolve(imgNewName);
+            }
+        });
+    });
+}
+
+async function insertProduct(product) {
+    return new Promise(function (resolve, reject) {
+        let addNewProQry = `INSERT INTO products(title, description, quantity, price, category, images, featured) VALUES('${product.title}', '${product.description}', '${product.quantity}', '${product.price}', '${product.category}', '${product.images}', '${product.featured}')`;
+        connection.query(addNewProQry, function (error, result) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+async function getAllProducts() {
+    return new Promise(function (resolve, reject) {
+        let addNewProQry = `SELECT * FROM products`;
+        connection.query(addNewProQry, function (error, result) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
 
 /** 
  * End : Admin UI

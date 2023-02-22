@@ -28,7 +28,25 @@
                     </tr>
                 </thead>
                 <tbody>
-
+                    <% for(let i = 0; i < products.length; i++){
+                        let images = products[i].images.split(",");
+                    %>
+                        <tr>
+                            <td><%= i + 1; %></td>
+                            <td>
+                                <img src="/product_images/<%= images[0]; %>" alt="Internal Server Error" style="height: 100px;width: 100px;" />
+                            </td>
+                            <td><%= products[i].title; %></td>
+                            <td><%= products[i].price; %></td>
+                            <td><%= products[i].quantity; %></td>
+                            <td><%= products[i].category; %></td>
+                            <td><%= products[i].description; %></td>
+                            <td>
+                                <a href="#" class="btn btn-info">Edit</a>
+                                <a href="#" class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>   
+                    <% } %>
                 </tbody>
                 <tfoot>
                     <tr>
