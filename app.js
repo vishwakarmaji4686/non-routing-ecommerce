@@ -38,15 +38,22 @@ connection.connect(function (error) {
  * END : Create Mysql Connection
  */
 
-app.get('/', function (req, res) {
-    let pageInfo = {
-        title: "Shop Page",
-        firstName: "Rock",
-        lastName: "Johnson",
-        pageName: 'home',
-    };
-    console.log(pageInfo, pageInfo.title);
-    res.render('template', pageInfo);
+app.get('/', async function (req, res) {
+    try {
+        let pageInfo = {
+            title: "Shop Page",
+            firstName: "Rock",
+            lastName: "Johnson",
+            pageName: 'home',
+            products: []
+        };
+        let allproducts = await getAllProducts();
+        pageInfo.products = allproducts;
+        console.log(pageInfo, pageInfo.title);
+        res.render('template', pageInfo);
+    } catch (error) {
+        console.log("User : home page :: ", error);
+    }
 });
 
 app.get('/about', function (req, res) {
@@ -170,8 +177,6 @@ app.get('/admin/products', async function (req, res) {
 });
 
 app.post("/admin/product", async function (req, res) {
-    console.log("req.body", req.body);
-    console.log("req.files", req.files);
     try {
         let product = {
             title: req.body.title,
@@ -183,12 +188,19 @@ app.post("/admin/product", async function (req, res) {
         };
         console.log("product", product);
         let allImages = [];
+
+        /* for image name change */
         if (req.files && req.files.productImages) {
-            for (let i = 0; i < req.files.productImages.length; i++) {
-                let singleImage = req.files.productImages[i];
-                console.log("singleImage :: ", i, singleImage);
-                let imageNewName = await uploadImage(singleImage);
-                console.log("\n\n ************** imageNewName", imageNewName);
+            if (req.files.productImages.length > 0) {
+                for (let i = 0; i < req.files.productImages.length; i++) {
+                    let singleImage = req.files.productImages[i];
+                    console.log("singleImage :: ", i, singleImage);
+                    let imageNewName = await uploadImage(singleImage);
+                    console.log("\n\n ************** imageNewName", imageNewName);
+                    allImages.push(imageNewName);
+                }
+            } else {
+                let imageNewName = await uploadImage(req.files.productImages);
                 allImages.push(imageNewName);
             }
             console.log("\n\n ***** All Images", allImages);
@@ -202,7 +214,7 @@ app.post("/admin/product", async function (req, res) {
         console.log("Errror", error);
     }
 });
-
+/* image name change */
 async function uploadImage(singleImage) {
     return new Promise(function (resolve, reject) {
         let imageNameArr = singleImage.name.split('.');
@@ -226,7 +238,7 @@ async function uploadImage(singleImage) {
         });
     });
 }
-
+/* send deta */
 async function insertProduct(product) {
     return new Promise(function (resolve, reject) {
         let addNewProQry = `INSERT INTO products(title, description, quantity, price, category, images, featured) VALUES('${product.title}', '${product.description}', '${product.quantity}', '${product.price}', '${product.category}', '${product.images}', '${product.featured}')`;
@@ -239,7 +251,7 @@ async function insertProduct(product) {
         });
     });
 }
-
+/* get data */
 async function getAllProducts() {
     return new Promise(function (resolve, reject) {
         let addNewProQry = `SELECT * FROM products`;
