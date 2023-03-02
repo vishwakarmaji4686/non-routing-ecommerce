@@ -1,17 +1,22 @@
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
+const bodyparser = require("body-parser");
 const mysql = require("mysql");
 const fileupload = require("express-fileupload");
+const expressSession = require("express-session");
 
 /** 
  * set template engine
  */
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + "/public"));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyparser.urlencoded({ extended: false }));
 app.use(fileupload());
-
+app.use(expressSession({
+    secret: "shop24",
+    saveUninitialized: false,
+    resave: false,
+}));
 
 
 
@@ -45,8 +50,12 @@ app.get('/', async function (req, res) {
             firstName: "Rock",
             lastName: "Johnson",
             pageName: 'home',
-            products: []
+            products: [],
+            isUserLoggedIn: false
         };
+        if(req.session.isUserLoggedIn){
+            pageInfo.isUserLoggedIn = true;
+        }
         let allproducts = await getAllProducts();
         pageInfo.products = allproducts;
         console.log(pageInfo, pageInfo.title);
@@ -60,6 +69,10 @@ app.get('/about', function (req, res) {
     let pageInfo = {
         title: "About Us",
         pageName: 'about',
+        isUserLoggedIn: false
+    }
+    if(req.session.isUserLoggedIn){
+        pageInfo.isUserLoggedIn = true;
     }
     res.render("template", pageInfo);
 });
@@ -69,7 +82,11 @@ app.get('/register', function (req, res) {
     let pageInfo = {
         title: "Registration",
         pageName: 'register',
+        isUserLoggedIn: false,
     };
+    if(req.session.isUserLoggedIn){
+        pageInfo.isUserLoggedIn = true;
+    }
     res.render("template", pageInfo);
 });
 
@@ -78,8 +95,12 @@ app.get('/all-users', async function (req, res) {
         let pageInfo = {
             title: "All Registered Users",
             pageName: 'all-users',
-            users: []
+            users: [],
+            isUserLoggedIn: false,
         };
+        if(req.session.isUserLoggedIn){
+            pageInfo.isUserLoggedIn = true;
+        }
         const allUsers = await getAllUsers();
         pageInfo.users = allUsers;
         res.render("template", pageInfo);
@@ -104,28 +125,66 @@ app.get('/login', function (req, res) {
     let pageInfo = {
         title: "Registration",
         pageName: 'login',
+        status: "",
+        message: "",
+        isUserLoggedIn: false,
     };
+    if(req.session.isUserLoggedIn){
+        pageInfo.isUserLoggedIn = true;
+    }
+    if (req.session.status && req.session.message) {
+        pageInfo.status = req.session.status;
+        pageInfo.message = req.session.message;
+        delete req.session.status, req.session.message;
+    }
     res.render("template", pageInfo);
 });
 
-app.post('/login', function (req, res) {
-    console.log("req.body", req.body);
-    const username = req.body.username;
-    const password = req.body.password;
-    console.log("password", password, username);
-    const getUser = `SELECT * FROM users WHERE email='${username}'`;
-    console.log("getUser", getUser);
-    console.log("STEP : 111111111111111111111111111");
-    connection.query(getUser, function (error, result) {
-        console.log("STEP : 22222222222222222222222222");
-        if (error) {
-            console.log("Database Query Error::::", error);
+app.post('/login', async function (req, res) {
+    try {
+        const username = req.body.username;
+        const password = req.body.password;
+        let user = await getUserByEmaildId(username);
+        if (user && user.length > 0) {
+            let userInfo = user[0];
+            if (userInfo.password == password) {
+                req.session.isUserLoggedIn = userInfo.id;
+                res.redirect('/');
+            } else {
+                req.session.status = "Error";
+                req.session.message = "Incorrect Password";
+                res.redirect('/login');
+            }
         } else {
-            console.log("result", result);
+            req.session.status = "Error";
+            req.session.message = "Invalid Email Address";
+            res.redirect('/login');
         }
-    });
-    console.log("STEP : 333333333333333333333333");
+    } catch (error) {
+        console.log("Login error :: ", error);
+    }
 });
+
+
+/** 
+ * To get user by email address
+ */
+async function getUserByEmaildId(emailId) {
+    return new Promise(function (resolve, reject) {
+        const getUser = `SELECT * FROM users WHERE email='${emailId}'`;
+        console.log("getUser", getUser);
+        console.log("STEP : 111111111111111111111111111");
+        connection.query(getUser, function (error, result) {
+            console.log("STEP : 22222222222222222222222222");
+            if (error) {
+                reject(error);
+            } else {
+                console.log("result", result);
+                resolve(result);
+            }
+        });
+    });
+}
 
 app.post('/register', function (req, res) {
     const firstName = req.body.firstName;
