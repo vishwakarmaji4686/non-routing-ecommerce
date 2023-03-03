@@ -53,12 +53,13 @@ app.get('/', async function (req, res) {
             products: [],
             isUserLoggedIn: false
         };
-        if(req.session.isUserLoggedIn){
+        if (req.session.isUserLoggedIn) {
             pageInfo.isUserLoggedIn = true;
         }
         let allproducts = await getAllProducts();
         pageInfo.products = allproducts;
         console.log(pageInfo, pageInfo.title);
+        console.log("req.session.cartItems", req.session.cartItems);
         res.render('template', pageInfo);
     } catch (error) {
         console.log("User : home page :: ", error);
@@ -71,7 +72,7 @@ app.get('/about', function (req, res) {
         pageName: 'about',
         isUserLoggedIn: false
     }
-    if(req.session.isUserLoggedIn){
+    if (req.session.isUserLoggedIn) {
         pageInfo.isUserLoggedIn = true;
     }
     res.render("template", pageInfo);
@@ -84,7 +85,7 @@ app.get('/register', function (req, res) {
         pageName: 'register',
         isUserLoggedIn: false,
     };
-    if(req.session.isUserLoggedIn){
+    if (req.session.isUserLoggedIn) {
         pageInfo.isUserLoggedIn = true;
     }
     res.render("template", pageInfo);
@@ -98,7 +99,7 @@ app.get('/all-users', async function (req, res) {
             users: [],
             isUserLoggedIn: false,
         };
-        if(req.session.isUserLoggedIn){
+        if (req.session.isUserLoggedIn) {
             pageInfo.isUserLoggedIn = true;
         }
         const allUsers = await getAllUsers();
@@ -129,7 +130,7 @@ app.get('/login', function (req, res) {
         message: "",
         isUserLoggedIn: false,
     };
-    if(req.session.isUserLoggedIn){
+    if (req.session.isUserLoggedIn) {
         pageInfo.isUserLoggedIn = true;
     }
     if (req.session.status && req.session.message) {
@@ -165,6 +166,60 @@ app.post('/login', async function (req, res) {
     }
 });
 
+app.get('/add-to-cart', function (req, res) {
+    console.log("req", req.query);
+    const proId = req.query.productId;
+    console.log("proId", proId);
+    let productIds = [];
+    if (req.session.cartItems) {
+        productIds = req.session.cartItems;
+    }
+    productIds.push(proId);
+    productIds = [...new Set(productIds)];
+    req.session.cartItems = productIds;
+    res.redirect('/');
+});
+
+app.get('/cart', async function (req, res) {
+    try {
+        let pageInfo = {
+            title: "Cart Items",
+            pageName: 'cart',
+            users: [],
+            isUserLoggedIn: false,
+            products: [],
+        };
+        if (req.session.isUserLoggedIn) {
+            pageInfo.isUserLoggedIn = true;
+        }
+        if (req.session.cartItems) {
+            let items = req.session.cartItems;
+            let ids = items.toString();
+            console.log("items", items);
+            console.log("ids", ids);
+            let products = await getProductByIds(ids);
+            console.log("products", products);
+            pageInfo.products = products;
+        }
+        res.render("template", pageInfo);
+    } catch (error) {
+        console.log("All users page Errro :::", error);
+    }
+});
+
+async function getProductByIds(ids) {
+    return new Promise(function (resolve, reject) {
+        const getProducts = `SELECT * FROM products WHERE id IN(${ids})`;
+        console.log("getProducts", getProducts);
+        connection.query(getProducts, function (error, result) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
 
 /** 
  * To get user by email address

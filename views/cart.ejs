@@ -1,0 +1,41 @@
+<h1>Cart Page</h1>
+<div class="row">
+    <div class="col-12">
+        <table class="table table-bordered table-hover table-stripped">
+            <thead>
+                <tr>
+                    <th>S.NO</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for(let i = 0; i < products.length; i++){ %>
+                    <tr>
+                        <td><%= i + 1; %></td>
+                        <td><%= products[i].title; %></td>
+                        <td><%= products[i].price; %></td>
+                        <td></td>
+                        <td><%= products[i].price; %></td>
+                        <td>
+                            <a href="#" class="btn btn-danger">Remove</a>
+                        </td>
+                    </tr>
+                <%} %>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>S.NO</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

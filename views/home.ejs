@@ -10,7 +10,14 @@
                     <img src="./images/mobile1.jpg" class="container" />
                 </div>
                 <div class="card-footer">
-                    <span>Price : $<%= products[i].price; %>/-</span>
+                    <div class="row">
+                        <div class="col-6">
+                            <span>Price : $<%= products[i].price; %>/-</span>
+                        </div>
+                        <div class="col-6 text text-end">
+                            <a href="/add-to-cart?productId=<%= products[i].id; %>" class="btn btn-info">Add to Cart</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
