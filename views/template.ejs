@@ -40,32 +40,32 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-md-auto gap-2">
-                    <% if(isUserLoggedIn) { %> 
-                    <li class="nav-item rounded">
-                        <a class="nav-link active" aria-current="page" href="/"><i
-                                class="bi bi-house-fill me-2"></i>Home</a>
-                    </li>
-                    <li class="nav-item rounded">
-                        <a class="nav-link" href="/about"><i class="bi bi-people-fill me-2"></i>About US</a>
-                    </li>
-                    <li class="nav-item rounded">
-                        <a class="nav-link" href="/contact"><i class="bi bi-telephone-fill me-2"></i>Contact</a>
-                    </li>
+                    <% if(isUserLoggedIn) { %>
+                        <li class="nav-item rounded">
+                            <a class="nav-link active" aria-current="page" href="/"><i
+                                    class="bi bi-house-fill me-2"></i>Home</a>
+                        </li>
+                        <li class="nav-item rounded">
+                            <a class="nav-link" href="/about"><i class="bi bi-people-fill me-2"></i>About US</a>
+                        </li>
+                        <li class="nav-item rounded">
+                            <a class="nav-link" href="/contact"><i class="bi bi-telephone-fill me-2"></i>Contact</a>
+                        </li>
 
-                    <li class="nav-item rounded">
-                        <a class="nav-link" href="/all-users"><i class="bi bi-telephone-fill me-2"></i>All Users</a>
-                    </li>
-                    <li class="nav-item rounded">
-                        <a class="nav-link" href="/cart"><i class="bi bi-telephone-fill me-2"></i>Cart</a>
-                    </li>
-                    <% } else { %> 
-                    <li class="nav-item rounded">
-                        <a class="nav-link" href="/login"><i class="bi bi-telephone-fill me-2"></i>Login</a>
-                    </li>
-                    <li class="nav-item rounded">
-                        <a class="nav-link" href="/register"><i class="bi bi-telephone-fill me-2"></i>Signup</a>
-                    </li>
-                    <% } %>
+                        <li class="nav-item rounded">
+                            <a class="nav-link" href="/all-users"><i class="bi bi-telephone-fill me-2"></i>All Users</a>
+                        </li>
+                        <li class="nav-item rounded">
+                            <a class="nav-link" href="/cart"><i class="bi bi-telephone-fill me-2"></i>Cart</a>
+                        </li>
+                        <% } else { %>
+                            <li class="nav-item rounded">
+                                <a class="nav-link" href="/login"><i class="bi bi-telephone-fill me-2"></i>Login</a>
+                            </li>
+                            <li class="nav-item rounded">
+                                <a class="nav-link" href="/register"><i class="bi bi-telephone-fill me-2"></i>Signup</a>
+                            </li>
+                            <% } %>
 
                 </ul>
             </div>

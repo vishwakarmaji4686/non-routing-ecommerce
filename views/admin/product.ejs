@@ -10,6 +10,13 @@
             <div class="col-6 text text-right">
                 <button class="btn btn-info" data-toggle="modal" data-target="#createProductModal">Add New</button>
             </div>
+            <% if(status && message) { %>
+                <div class="col-12 text text-center">
+                    <h4 class="text text-success">
+                        <%= message; %>
+                    </h4>
+                </div>
+                <%} %>
         </div>
     </div>
     <div class="card-body">
@@ -28,25 +35,39 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% for(let i = 0; i < products.length; i++){
-                        let images = products[i].images.split(",");
-                    %>
+                    <% for(let i=0; i < products.length; i++){ let images=(products[i].images) ?
+                        products[i].images.split(",") : [products[i].images]; %>
                         <tr>
-                            <td><%= i + 1; %></td>
                             <td>
-                                <img src="/product_images/<%= images[0]; %>" alt="Internal Server Error" style="height: 100px;width: 100px;" />
+                                <%= i + 1; %>
                             </td>
-                            <td><%= products[i].title; %></td>
-                            <td><%= products[i].price; %></td>
-                            <td><%= products[i].quantity; %></td>
-                            <td><%= products[i].category; %></td>
-                            <td><%= products[i].description; %></td>
                             <td>
-                                <a href="#" class="btn btn-info">Edit</a>
-                                <a href="#" class="btn btn-danger">Delete</a>
+                                <img src="/product_images/<%= images[0]; %>" alt="Internal Server Error"
+                                    style="height: 100px;width: 100px;" />
                             </td>
-                        </tr>   
-                    <% } %>
+                            <td>
+                                <%= products[i].title; %>
+                            </td>
+                            <td>
+                                <%= products[i].price; %>
+                            </td>
+                            <td>
+                                <%= products[i].quantity; %>
+                            </td>
+                            <td>
+                                <%= products[i].category; %>
+                            </td>
+                            <td>
+                                <%= products[i].description; %>
+                            </td>
+                            <td>
+                                <a href="/admin/edit-product?productId=<%= products[i].id; %>" class="btn btn-info">Edit</a>
+                                <a href="/admin/delete-product?productId=<%= products[i].id; %>"
+                                    onclick="return confirm('Are you sure want to delete this product ?');"
+                                    class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                        <% } %>
                 </tbody>
                 <tfoot>
                     <tr>
@@ -126,7 +147,8 @@
                                     <span class="input-group-text">Upload</span>
                                 </div>
                                 <div class="custom-file">
-                                    <input type="file" multiple="multiple" name="productImages" class="custom-file-input" id="inputGroupFile01">
+                                    <input type="file" multiple="multiple" name="productImages"
+                                        class="custom-file-input" id="inputGroupFile01">
                                     <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
                                 </div>
                             </div>

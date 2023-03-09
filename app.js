@@ -203,7 +203,7 @@ app.get('/cart', async function (req, res) {
         }
         res.render("template", pageInfo);
     } catch (error) {
-        console.log("All users page Errro :::", error);
+        console.log("All users page error :::", error);
     }
 });
 
@@ -279,7 +279,14 @@ app.get('/admin/products', async function (req, res) {
     try {
         let page = {
             title: "",
-            pageName: "product"
+            pageName: "product",
+            status: "",
+            message: ""
+        }
+        if (req.session.status && req.session.message) {
+            page.status = req.session.status;
+            page.message = req.session.message;
+            delete req.session.status, req.session.message;
         }
         let products = await getAllProducts();
         page.products = products;
@@ -328,6 +335,68 @@ app.post("/admin/product", async function (req, res) {
         console.log("Errror", error);
     }
 });
+
+/** 
+ * Delete Product by Id
+ */
+app.get('/admin/delete-product', async function (req, res) {
+    try {
+        console.log("req.query", req.query);
+        const productId = req.query.productId;
+        console.log("productId", productId);
+        await deleteProductById(productId);
+        req.session.status = "Success";
+        req.session.message = "Product has been deleted";
+        res.redirect('/admin/products');
+    } catch (error) {
+        console.log("Delete product Error ::", error);
+    }
+});
+
+app.get('/admin/edit-product', async function (req, res) {
+    try {
+        console.log("req.query", req.query);
+        const productId = req.query.productId;
+        console.log("productId", productId);
+        let page = {
+            title: "",
+            pageName: "edit-product",
+            product: {}
+        }
+        let product = await getProductById(productId);
+        console.log("product", product);
+        page.product = product;
+        console.log("page", page);
+        res.render('admin/template', page);
+    } catch (error) {
+        console.log("edit product page error", error);
+    }
+});
+
+/** 
+ * Update Product By Id
+ */
+app.post("/admin/update-product", async function (req, res) {
+    try {
+        const productId = req.query.productId;
+        let product = {
+            title: req.body.title,
+            description: req.body.description,
+            price: req.body.price,
+            quantity: req.body.quantity,
+            category: req.body.category,
+            featured: (req.body.featured && req.body.featured == 'no') ? 0 : 1,
+        };
+        console.log("product", product, productId);
+        await updateSingleProduct(productId, product);
+        req.session.status = "Success";
+        req.session.message = "Product has been updated";
+        res.redirect('/admin/products');
+    } catch (error) {
+        console.log("Errror", error);
+    }
+});
+
 /* image name change */
 async function uploadImage(singleImage) {
     return new Promise(function (resolve, reject) {
@@ -365,6 +434,33 @@ async function insertProduct(product) {
         });
     });
 }
+
+async function updateSingleProduct(productId, product) {
+    return new Promise(function (resolve, reject) {
+        let addNewProQry = `UPDATE products SET title='${product.title}', description='${product.description}', price='${product.price}', quantity='${product.quantity}', category='${product.category}', featured='${product.featured}' WHERE id='${productId}'`;
+        connection.query(addNewProQry, function (error, result) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+}
+
+async function deleteProductById(proId) {
+    return new Promise(function (resolve, reject) {
+        let addNewProQry = `DELETE FROM products WHERE id='${proId}'`;
+        connection.query(addNewProQry, function (error, result) {
+            if (error) {
+                reject(error);
+            } else {
+                console.log("result", result);
+                resolve(true);
+            }
+        });
+    });
+}
 /* get data */
 async function getAllProducts() {
     return new Promise(function (resolve, reject) {
@@ -374,6 +470,18 @@ async function getAllProducts() {
                 reject(error);
             } else {
                 resolve(result);
+            }
+        });
+    });
+}
+async function getProductById(id) {
+    return new Promise(function (resolve, reject) {
+        let addNewProQry = `SELECT * FROM products WHERE id='${id}'`;
+        connection.query(addNewProQry, function (error, result) {
+            if (error) {
+                reject(error);
+            } else {
+                resolve(result[0]);
             }
         });
     });

@@ -1,0 +1,87 @@
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <form action="/admin/update-product?productId=<%= product.id; %>" method="post">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Edit Product : </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Title</label>
+                                <input type="text" name="title" id="title" class="form-control"
+                                    value="<%= product.title; %>" />
+                            </div>
+                            <div class="col-12 mt-2">
+                                <label>Description</label>
+                                <textarea name="description" class="form-control"><%= product.title; %></textarea>
+                            </div>
+                            <div class="col-6 mt-2">
+                                <label>Price</label>
+                                <input type="number" name="price" id="price" class="form-control"
+                                    value="<%= product.price; %>" />
+                            </div>
+                            <div class="col-6 mt-2">
+                                <label>Quantity</label>
+                                <input type="number" name="quantity" id="quantity" class="form-control"
+                                    value="<%= product.quantity; %>" />
+                            </div>
+
+                            <div class="col-6 mt-2">
+                                <label>Category</label>
+                                <select name="category" class="form-control">
+                                    <option value="">Select Product Category</option>
+                                    <option <%=(product.category && product.category=="electronics"
+                                        )?"selected='selected'":""; %> value="electronics">Electronics</option>
+                                    <option <%=(product.category && product.category=="mens apparal"
+                                        )?"selected='selected'":""; %> value="mens apparal">Men's Apparal</option>
+                                    <option <%=(product.category && product.category=="kids apparal"
+                                        )?"selected='selected'":""; %> value="kids apparal">Kids Apparal</option>
+                                    <option <%=(product.category && product.category=="Womens apparal"
+                                        )?"selected='selected'":""; %> value="Womens apparal">Womens Apparal</option>
+                                    <option <%=(product.category && product.category=="home decor"
+                                        )?"selected='selected'":""; %> value="home decor">Home Decor</option>
+                                    <option <%=(product.category && product.category=="other"
+                                        )?"selected='selected'":""; %> value="other">other</option>
+                                </select>
+                            </div>
+                            <div class="col-6 mt-2">
+                                <label>Featured</label><br />
+                                <span>
+                                    <input type="radio" name="featured" value="yes" <%=(product.featured &&
+                                        product.featured==1) ? "checked='checked'" : "" ; %> />
+                                    Yes
+                                </span>
+                                <span>
+                                    <input type="radio" name="featured" value="no" <%=(!product.featured)
+                                        ? "checked='checked'" : "" ; %> />
+                                    No
+                                </span>
+                            </div>
+
+                            <div class="col-12 mt-2">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Upload</span>
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" multiple="multiple" name="productImages"
+                                            class="custom-file-input" id="inputGroupFile01">
+                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-2 text text-center">
+                                <button type="submit" class="btn btn-info">Update Product</button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-footer"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
