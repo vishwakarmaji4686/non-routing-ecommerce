@@ -290,7 +290,6 @@ app.get('/admin/products', async function (req, res) {
         }
         let products = await getAllProducts();
         page.products = products;
-        console.log("page", page);
         res.render('admin/template', page);
     } catch (error) {
         console.log("error", error);
@@ -388,6 +387,24 @@ app.post("/admin/update-product", async function (req, res) {
             featured: (req.body.featured && req.body.featured == 'no') ? 0 : 1,
         };
         console.log("product", product, productId);
+
+        let allImages = [];
+        if (req.files && req.files.productImages) {
+            if (req.files.productImages.length > 0) {
+                for (let i = 0; i < req.files.productImages.length; i++) {
+                    let singleImage = req.files.productImages[i];
+                    console.log("singleImage :: ", i, singleImage);
+                    let imageNewName = await uploadImage(singleImage);
+                    console.log("\n\n ************** imageNewName", imageNewName);
+                    allImages.push(imageNewName);
+                }
+            } else {
+                let imageNewName = await uploadImage(req.files.productImages);
+                allImages.push(imageNewName);
+            }
+            let uploadImages = allImages.toString(',');
+            product.images = uploadImages;
+        }
         await updateSingleProduct(productId, product);
         req.session.status = "Success";
         req.session.message = "Product has been updated";
@@ -435,9 +452,21 @@ async function insertProduct(product) {
     });
 }
 
+/* START:: product data update function */
 async function updateSingleProduct(productId, product) {
     return new Promise(function (resolve, reject) {
-        let addNewProQry = `UPDATE products SET title='${product.title}', description='${product.description}', price='${product.price}', quantity='${product.quantity}', category='${product.category}', featured='${product.featured}' WHERE id='${productId}'`;
+        let addNewProQry = `UPDATE products SET title='${product.title}', description='${product.description}', price='${product.price}', quantity='${product.quantity}', category='${product.category}', featured='${product.featured}'`;
+
+        /** 
+         * Update images if images uploaded by admin
+         */
+        if (product.images) {
+            addNewProQry = addNewProQry + `, images='${product.images}'`;
+        }
+        addNewProQry = addNewProQry + ` WHERE id='${productId}'`;
+
+        console.log("addNewProQry", addNewProQry);
+
         connection.query(addNewProQry, function (error, result) {
             if (error) {
                 reject(error);
