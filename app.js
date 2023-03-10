@@ -477,6 +477,9 @@ async function updateSingleProduct(productId, product) {
     });
 }
 
+/** 
+ * Delete product by product Id
+ */
 async function deleteProductById(proId) {
     return new Promise(function (resolve, reject) {
         let addNewProQry = `DELETE FROM products WHERE id='${proId}'`;
