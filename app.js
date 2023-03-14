@@ -4,6 +4,7 @@ const bodyparser = require("body-parser");
 const mysql = require("mysql");
 const fileupload = require("express-fileupload");
 const expressSession = require("express-session");
+const cookieParser = require("cookie-parser");
 
 /** 
  * set template engine
@@ -17,8 +18,7 @@ app.use(expressSession({
     saveUninitialized: false,
     resave: false,
 }));
-
-
+app.use(cookieParser());
 
 /** 
  * START : Create Mysql Connection
@@ -171,12 +171,12 @@ app.get('/add-to-cart', function (req, res) {
     const proId = req.query.productId;
     console.log("proId", proId);
     let productIds = [];
-    if (req.session.cartItems) {
-        productIds = req.session.cartItems;
+    if (req.cookies.cartItems) {
+        productIds = req.cookies.cartItems;
     }
     productIds.push(proId);
     productIds = [...new Set(productIds)];
-    req.session.cartItems = productIds;
+    res.cookie('cartItems', productIds);
     res.redirect('/');
 });
 
@@ -192,8 +192,8 @@ app.get('/cart', async function (req, res) {
         if (req.session.isUserLoggedIn) {
             pageInfo.isUserLoggedIn = true;
         }
-        if (req.session.cartItems) {
-            let items = req.session.cartItems;
+        if (req.cookies.cartItems) {
+            let items = req.cookies.cartItems;
             let ids = items.toString();
             console.log("items", items);
             console.log("ids", ids);

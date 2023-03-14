@@ -3,18 +3,18 @@
         <form action="/login" method="post">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="text text-center">Login Portal</h3>
+                    <h3 class="text text-center" id="cartTitle">Login Portal</h3>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <% if(status && message) { %>
                         <div class="col-12 mt-3">
-                            <h3 class="text text-danger"><%= message; %></h3>
+                            <h3 class="text text-danger" ><%= message; %></h3>
                         </div>
                         <% } %>
                         <div class="col-12 mt-3">
                             <label for="">Username</label>
-                            <input type="text" name="username" class="form-control" />
+                            <input type="text" name="username" class="form-control" id="username" />
                         </div>
                         <div class="col-12 mt-3">
                             <label for="">Password</label>
@@ -29,3 +29,23 @@
         </form>
     </div>
 </div>
+<script>
+    /** 
+     * Get/set value into the non form-elements
+     */
+    let x = $('#cartTitle').html();
+    console.log("x", x);
+    $('#cartTitle').html("Hello World"); 
+
+    /** 
+     * GET/SET value into the form-elements
+     */
+    let y = $('#username').val();
+    console.log("y", y);
+    // $('#username').val("jack@gmail.com");
+
+    $('#username').attr("data-slidenumber", 4);
+    $('#username').attr("placeholder", "Enter your email address");
+    $('#username').removeAttr("name");
+    
+</script>

@@ -13,13 +13,23 @@
                 </tr>
             </thead>
             <tbody>
-                <% for(let i = 0; i < products.length; i++){ %>
+                <% 
+                let grandTotal = 0;
+                for(let i = 0; i < products.length; i++){
+                    grandTotal = grandTotal + products[i].price;
+                %>
+                    
                     <tr>
                         <td><%= i + 1; %></td>
                         <td><%= products[i].title; %></td>
                         <td><%= products[i].price; %></td>
-                        <td></td>
-                        <td><%= products[i].price; %></td>
+                        <td>
+                            <input type="hidden" id="productPrice_<%= products[i].id; %>" value="<%= products[i].price; %>" />
+                            <input type="number" id="productQuantity_<%= products[i].id; %>" class="form-control" onchange="updatePrice('<%= products[i].id; %>');" min="1" max="10" value="1" />
+                        </td>
+                        <td>
+                            <span id="productTotal_<%= products[i].id; %>" class="single-product-total"><%= products[i].price; %></span>
+                        </td>
                         <td>
                             <a href="#" class="btn btn-danger">Remove</a>
                         </td>
@@ -28,14 +38,29 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <th>S.NO</th>
-                    <th>Title</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Action</th>
+                    <th colspan="4" class="text text-end">Grand Total</th>
+                    <th colspan="2" id="grandTotal"><%= grandTotal; %></th>
                 </tr>
             </tfoot>
         </table>
     </div>
 </div>
+<script>
+    function updatePrice(productId){
+        console.log("productId", productId);
+        let productQuantity = parseInt($('#productQuantity_'+productId).val());
+        console.log("productQuantity", productQuantity);
+        let productPrice = parseInt($('#productPrice_'+productId).val());
+        console.log("productPrice", productPrice);
+        let total = productQuantity * productPrice;
+        console.log("total", total);
+        $('#productTotal_'+productId).html(total);
+
+        let grandTotal = 0;
+        $('.single-product-total').each(function(){
+            let singleProPrice = parseInt($(this).html());
+            grandTotal = grandTotal + singleProPrice;
+        });
+        $('#grandTotal').html(grandTotal);
+    }
+</script>
