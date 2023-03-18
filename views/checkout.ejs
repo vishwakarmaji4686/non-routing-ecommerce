@@ -1,0 +1,151 @@
+<h1>Place Order</h1>
+<form action="" method="post">
+    <div class="row">
+        <div class="col-7">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Shipping Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 mt-2">
+                                    <label>Full Name</label>
+                                    <input type="text" name="shippingFullname" class="form-control" />
+                                </div>
+                                <div class="col-6 mt-2">
+                                    <label>Contact Number</label>
+                                    <input type="number" name="shippingContact" class="form-control" />
+                                </div>
+                                <div class="col-6 mt-2">
+                                    <label>Pincode</label>
+                                    <input type="number" name="shippingPincode" class="form-control" />
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <label>Address</label>
+                                    <textarea name="shippingAdress" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 mt-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Billing Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 mt-2">
+                                    <label>Full Name</label>
+                                    <input type="text" name="billingFullname" class="form-control" />
+                                </div>
+                                <div class="col-6 mt-2">
+                                    <label>Contact Number</label>
+                                    <input type="number" name="billingContact" class="form-control" />
+                                </div>
+                                <div class="col-6 mt-2">
+                                    <label>Pincode</label>
+                                    <input type="number" name="billingPincode" class="form-control" />
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <label>Address</label>
+                                    <textarea name="billingAdress" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Cart Summary</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover table-stripped">
+                                <thead>
+                                    <tr>
+                                        <th>S.NO</th>
+                                        <th>Title</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <%
+                                    let grandTotal = 0;
+                                    for(let i = 0; i < products.length; i++){
+                                        grandTotal += products[i].price;
+                                    %> 
+                                    <tr>
+                                        <td>
+                                            <%= i + 1;  %>
+                                        </td>
+                                        <td>
+                                            <%= products[i].title;  %>
+                                        </td>
+                                        <td>
+                                            <%= products[i].price;  %>
+                                        </td>
+                                        <td>
+                                            <%= products[i].quantity;  %>
+                                        </td>
+                                        <td>
+                                            <%= products[i].total;  %>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="4" class="text text-end">Grand Total</th>
+                                        <th>
+                                            <input type="hidden" name="grandTotal" value="<%= grandTotal; %>" />
+                                            <%= grandTotal; %>
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Payment Method</h3>
+                        </div>
+                        <div class="card-body">
+                            <label>
+                                <input type="radio" name="paymentMethod" value="cod" /> Cash on delivery
+                            </label><br/>
+                            <label>
+                                <input type="radio" name="paymentMethod" value="netBanking" /> Internet Banking
+                            </label><br />
+                            <label>
+                                <input type="radio" name="paymentMethod" value="upi" /> UPI
+                            </label><br />
+                            <label>
+                                <input type="radio" name="paymentMethod" value="wallet" /> Wallet
+                            </label><br />
+                            <label>
+                                <input type="radio" name="paymentMethod" value="creditCard" /> Credit Card
+                            </label><br />
+                            <label>
+                                <input type="radio" name="paymentMethod" value="debitCard" /> Debit Card
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

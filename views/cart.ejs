@@ -1,63 +1,78 @@
 <h1>Cart Page</h1>
 <div class="row">
     <div class="col-12">
-        <table class="table table-bordered table-hover table-stripped">
-            <thead>
-                <tr>
-                    <th>S.NO</th>
-                    <th>Title</th>
-                    <th>Price</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% 
-                let grandTotal = 0;
-                for(let i = 0; i < products.length; i++){
-                    grandTotal = grandTotal + products[i].price;
-                %>
-                    
+        <form action="/checkout" method="post">
+            <table class="table table-bordered table-hover table-stripped">
+                <thead>
                     <tr>
-                        <td><%= i + 1; %></td>
-                        <td><%= products[i].title; %></td>
-                        <td><%= products[i].price; %></td>
-                        <td>
-                            <input type="hidden" id="productPrice_<%= products[i].id; %>" value="<%= products[i].price; %>" />
-                            <input type="number" id="productQuantity_<%= products[i].id; %>" class="form-control" onchange="updatePrice('<%= products[i].id; %>');" min="1" max="10" value="1" />
-                        </td>
-                        <td>
-                            <span id="productTotal_<%= products[i].id; %>" class="single-product-total"><%= products[i].price; %></span>
-                        </td>
-                        <td>
-                            <a href="#" class="btn btn-danger">Remove</a>
-                        </td>
+                        <th>S.NO</th>
+                        <th>Title</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Action</th>
                     </tr>
-                <%} %>
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="4" class="text text-end">Grand Total</th>
-                    <th colspan="2" id="grandTotal"><%= grandTotal; %></th>
-                </tr>
-            </tfoot>
-        </table>
+                </thead>
+                <tbody>
+                    <% let grandTotal=0; for(let i=0; i < product.length; i++){ grandTotal=grandTotal +
+                        product[i].price; %>
+
+                        <tr>
+                            <td>
+                                <%= i + 1; %>
+                            </td>
+                            <td>
+                                <%= product[i].title; %>
+                            </td>
+                            <td>
+                                <%= product[i].price; %>
+                            </td>
+                            <td>
+                                <input type="hidden" id="productPrice_<%= product[i].id; %>"
+                                    value="<%= product[i].price; %>" />
+                                <input type="hidden" name="productIds" value="<%= product[i].id; %>" />
+                                <input type="number" name="productQuantity" id="productQuantity_<%= product[i].id; %>"
+                                    class="form-control" onchange="updatePrice('<%= product[i].id; %>');" min="1"
+                                    max="10" value="1" />
+                            </td>
+                            <td>
+                                <span id="productTotal_<%= product[i].id; %>" class="single-product-total">
+                                    <%= product[i].price; %>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="#" class="btn btn-danger">Remove</a>
+                            </td>
+                        </tr>
+                        <%} %>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text text-end">Grand Total</th>
+                        <th id="grandTotal">
+                            <%= grandTotal; %>
+                        </th>
+                        <th>
+                            <button type="submit" class="btn btn-success">Proceed To Checkout</button>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </form>
     </div>
 </div>
 <script>
-    function updatePrice(productId){
+    function updatePrice(productId) {
         console.log("productId", productId);
-        let productQuantity = parseInt($('#productQuantity_'+productId).val());
+        let productQuantity = parseInt($('#productQuantity_' + productId).val());
         console.log("productQuantity", productQuantity);
-        let productPrice = parseInt($('#productPrice_'+productId).val());
+        let productPrice = parseInt($('#productPrice_' + productId).val());
         console.log("productPrice", productPrice);
         let total = productQuantity * productPrice;
         console.log("total", total);
-        $('#productTotal_'+productId).html(total);
-
+        $('#productTotal_' + productId).html(total);
         let grandTotal = 0;
-        $('.single-product-total').each(function(){
+        $('.single-product-total').each(function () {
             let singleProPrice = parseInt($(this).html());
             grandTotal = grandTotal + singleProPrice;
         });

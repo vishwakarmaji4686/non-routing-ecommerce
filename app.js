@@ -187,7 +187,7 @@ app.get('/cart', async function (req, res) {
             pageName: 'cart',
             users: [],
             isUserLoggedIn: false,
-            products: [],
+            product: [],
         };
         if (req.session.isUserLoggedIn) {
             pageInfo.isUserLoggedIn = true;
@@ -199,7 +199,62 @@ app.get('/cart', async function (req, res) {
             console.log("ids", ids);
             let products = await getProductByIds(ids);
             console.log("products", products);
-            pageInfo.products = products;
+            pageInfo.product = products;
+        }
+        res.render("template", pageInfo);
+    } catch (error) {
+        console.log("All users page error :::", error);
+    }
+});
+
+app.post('/checkout', async function (req, res) {
+    try {
+        console.log("req.body", req.body);
+        const productIds = req.body.productIds;
+        const quantity = req.body.productQuantity;
+        let items = {
+            productIds: productIds,
+            quantity: quantity
+        };
+        console.log("items", items);
+        res.cookie('checkoutItems', items);
+        res.redirect('/checkout');
+    } catch (error) {
+        console.log("All users page error :::", error);
+    }
+});
+
+app.get('/checkout', async function (req, res) {
+    try {
+        let pageInfo = {
+            title: "Checkout",
+            pageName: 'checkout',
+            isUserLoggedIn: false,
+            products: [],
+        };
+        if (req.session.isUserLoggedIn) {
+            pageInfo.isUserLoggedIn = true;
+        }
+        if(req.cookies.checkoutItems){
+            const productIds = req.cookies.checkoutItems.productIds;
+            const productQuantities = req.cookies.checkoutItems.quantity;
+            let ids = productIds.toString(',');
+            let products = await getProductByIds(ids);
+            let items = [];
+            products.forEach((singleProduct, index) => {
+                let price = singleProduct.price;
+                let singleItem = {
+                    productId: singleProduct.id,
+                    title: singleProduct.title,
+                    price : singleProduct.price,
+                    quantity: productQuantities[index],
+                    total: singleProduct.price * productQuantities[index]
+                };
+                items.push(singleItem);
+            });
+            pageInfo.products = items;
+            // let x = JSON.stringify(items);
+            // console.log("items", );
         }
         res.render("template", pageInfo);
     } catch (error) {
